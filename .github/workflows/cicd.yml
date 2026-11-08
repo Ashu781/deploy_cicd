@@ -1,0 +1,40 @@
+name: deployment
+
+on:
+  push:
+    branches:
+      - main
+
+
+permissions:
+  contents: read
+
+jobs:
+  test-execution:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: checkout repo
+        uses: actions/checkout@v4
+
+      - name: test run
+        run: bash greetings.sh
+
+
+  docker-build:
+    needs: test-execution
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+
+      - name: ghcr login
+        run: echo "${{secrets.GITHUB_TOKEN}}" | docker login ghcr.io -u "${{github.actor}}" --password-stdin
+
+      - name: image build
+        run: docker build -t ghcr.io/ashu781/greet:sha-"${GITHUB_SHA::7}" .
+
+      - name: run container
+        run: docker run --name greet_cont1 --rm -d greet:sha-"${GITHUB_SHA::7}"
+
+      - name: image push
+        run: docker push ghcr.io/ashu781/greet:sha-"${GITHUB_SHA::7}"  
