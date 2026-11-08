@@ -23,6 +23,9 @@ jobs:
   docker-build:
     needs: test-execution
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
@@ -34,7 +37,7 @@ jobs:
         run: docker build -t ghcr.io/ashu781/greet:sha-"${GITHUB_SHA::7}" .
 
       - name: run container
-        run: docker run -d --rm --name greet_cont1 ghcr.io/ashu781/greet:sha-"${GITHUB_SHA::7}"
+        run: docker run --rm --name greet_cont1 ghcr.io/ashu781/greet:sha-"${GITHUB_SHA::7}"
 
       - name: image push
         run: docker push ghcr.io/ashu781/greet:sha-"${GITHUB_SHA::7}"  
