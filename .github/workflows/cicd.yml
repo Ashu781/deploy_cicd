@@ -34,7 +34,7 @@ jobs:
         run: docker build -t ghcr.io/ashu781/greet:sha-"${GITHUB_SHA::7}" .
 
       - name: run container
-        run: docker run --name greet_cont1 --rm -d greet:sha-"${GITHUB_SHA::7}"
+        run: docker run -d --rm --name greet_cont1 ghcr.io/ashu781/greet:sha-"${GITHUB_SHA::7}"
 
       - name: image push
         run: docker push ghcr.io/ashu781/greet:sha-"${GITHUB_SHA::7}"  
